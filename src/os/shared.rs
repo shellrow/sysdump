@@ -1,5 +1,6 @@
-use sysinfo::{System, SystemExt, ProcessorExt, DiskExt, UserExt, PidExt, ProcessExt, DiskUsage};
+use sysinfo::{System, SystemExt, ProcessorExt, DiskExt, UserExt, PidExt, ProcessExt, DiskUsage, RefreshKind};
 //use sysinfo::{NetworkExt, NetworksExt};
+use default_net::Interface as NetworkInterface;
 use std::collections::HashMap;
 
 #[cfg(target_os = "windows")]
@@ -105,7 +106,7 @@ pub struct SystemOverview {
     pub cpu: CpuInfo,
     pub memory: MemoryInfo,
     pub disks: Vec<Diskinfo>,
-    pub network_interfaces: Vec<NetworkInterfaceInfo>,
+    pub network_interfaces: Vec<NetworkInterface>,
     pub os: OsInfo,
     pub users: Vec<UserInfo>,
 }
@@ -129,11 +130,10 @@ pub struct ProcessInfo {
 }
 
 pub fn get_system_overview() -> SystemOverview {
-    let mut sys = System::new_all();
-    sys.refresh_all();
+    let sys_cpu = System::new_with_specifics(RefreshKind::new().with_cpu());
     // CPU
-    let global_cpu =  sys.global_processor_info();
-    let processors = sys.processors();
+    let global_cpu = sys_cpu.global_processor_info();
+    let processors = sys_cpu.processors();
     let cpu_info = CpuInfo {
         vendor_id: global_cpu.vendor_id().to_string(),
         brand: global_cpu.brand().to_string(),
@@ -146,7 +146,7 @@ pub fn get_system_overview() -> SystemOverview {
         },
         cpu_usage: global_cpu.cpu_usage(),
         physical_core_count: {
-            match sys.physical_core_count() {
+            match sys_cpu.physical_core_count() {
                 Some(cnt) => cnt,
                 None => processors.len() / 2,
             }
@@ -154,17 +154,20 @@ pub fn get_system_overview() -> SystemOverview {
         logical_processor_count: processors.len(),
     };
 
+    let sys_ram = System::new_with_specifics(RefreshKind::new().with_memory());
     // Memory
     let mem_info = MemoryInfo {
-        total_memory: sys.total_memory(),
-        free_memory: sys.free_memory(),
-        available_memory: sys.available_memory(),
-        used_memory: sys.used_memory(),
-        total_swap: sys.total_swap(),
-        free_swap: sys.free_swap(),
-        used_swap: sys.used_swap(),
+        total_memory: sys_ram.total_memory(),
+        free_memory: sys_ram.free_memory(),
+        available_memory: sys_ram.available_memory(),
+        used_memory: sys_ram.used_memory(),
+        total_swap: sys_ram.total_swap(),
+        free_swap: sys_ram.free_swap(),
+        used_swap: sys_ram.used_swap(),
     };
 
+    let mut sys = System::new_all();
+    sys.refresh_all();
     // Disk
     let mut disks: Vec<Diskinfo> = vec![];
     for disk in sys.disks() {
@@ -180,8 +183,7 @@ pub fn get_system_overview() -> SystemOverview {
     }
 
     // Network
-    // TODO!
-    let interfaces: Vec<NetworkInterfaceInfo> = vec![];
+    let interfaces: Vec<NetworkInterface> = default_net::get_interfaces();
 
     // OS
     let load_avg = sys.load_average();
@@ -223,13 +225,6 @@ pub fn get_system_overview() -> SystemOverview {
         users: user_list,
     };
     return system_overview;
-}
-
-#[allow(dead_code)]
-pub fn get_network_interfaces() -> Vec<NetworkInterfaceInfo>  {
-    // TODO!
-    let ifaces: Vec<NetworkInterfaceInfo> = vec![];   
-    return ifaces;
 }
 
 pub fn get_process_map() -> HashMap<u32, ProcessInfo> {

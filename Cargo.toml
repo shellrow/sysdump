@@ -4,8 +4,19 @@ version = "0.1.0"
 edition = "2021"
 authors = ["shellrow <81893184+shellrow@users.noreply.github.com>"]
 
+[lib]
+name="sysdump"
+path="src/lib.rs"
+
+[[bin]]
+name="sysdump"
+path = "src/bin/main.rs"
+
 [dependencies]
 default-net = "0.8.0"
 sysinfo = "0.23.0"
 netstat2 = "0.9.1"
+reqwest = "0.11.9"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
 term-table = "1.3.2"

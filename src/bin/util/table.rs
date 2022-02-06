@@ -2,8 +2,8 @@ use term_table::{Table, TableStyle};
 use term_table::table_cell::{TableCell,Alignment};
 use term_table::row::Row;
 
-use crate::os::shared::{self, SystemOverview};
-use crate::network::netstat;
+use sysdump::os::shared::{self, SystemOverview};
+use sysdump::network::netstat;
 
 pub fn show_system_overview() {
     let sys_overview: SystemOverview = shared::get_system_overview();
@@ -146,28 +146,42 @@ pub fn show_system_overview() {
         table.add_row(Row::new(vec![
             TableCell::new_with_alignment("", 1, Alignment::Left),
             TableCell::new_with_alignment("Mac Address", 1, Alignment::Left),
-            TableCell::new_with_alignment(interface.mac, 1, Alignment::Left)
+            TableCell::new_with_alignment(format!("{:?}",interface.mac_addr), 1, Alignment::Left)
         ]));
         table.add_row(Row::new(vec![
             TableCell::new_with_alignment("", 1, Alignment::Left),
             TableCell::new_with_alignment("IPv4 Address", 1, Alignment::Left),
-            TableCell::new_with_alignment(format!("{:?}",interface.ipv4_addr), 1, Alignment::Left)
+            TableCell::new_with_alignment(format!("{:?}",interface.ipv4), 1, Alignment::Left)
         ]));
         table.add_row(Row::new(vec![
             TableCell::new_with_alignment("", 1, Alignment::Left),
             TableCell::new_with_alignment("IPv6 Address", 1, Alignment::Left),
-            TableCell::new_with_alignment(format!("{:?}",interface.ipv6_addr), 1, Alignment::Left)
+            TableCell::new_with_alignment(format!("{:?}",interface.ipv6), 1, Alignment::Left)
         ]));
-        table.add_row(Row::new(vec![
-            TableCell::new_with_alignment("", 1, Alignment::Left),
-            TableCell::new_with_alignment("Gateway Mac", 1, Alignment::Left),
-            TableCell::new_with_alignment(interface.gateway_mac, 1, Alignment::Left)
-        ]));
-        table.add_row(Row::new(vec![
-            TableCell::new_with_alignment("", 1, Alignment::Left),
-            TableCell::new_with_alignment("Gateway IP", 1, Alignment::Left),
-            TableCell::new_with_alignment(interface.gateway_ip, 1, Alignment::Left)
-        ]));
+        if let Some(gateway) = interface.gateway {
+            table.add_row(Row::new(vec![
+                TableCell::new_with_alignment("", 1, Alignment::Left),
+                TableCell::new_with_alignment("Gateway Mac", 1, Alignment::Left),
+                TableCell::new_with_alignment(gateway.mac_addr, 1, Alignment::Left)
+            ]));
+            table.add_row(Row::new(vec![
+                TableCell::new_with_alignment("", 1, Alignment::Left),
+                TableCell::new_with_alignment("Gateway IP", 1, Alignment::Left),
+                TableCell::new_with_alignment(gateway.ip_addr, 1, Alignment::Left)
+            ]));
+        }else {
+            table.add_row(Row::new(vec![
+                TableCell::new_with_alignment("", 1, Alignment::Left),
+                TableCell::new_with_alignment("Gateway Mac", 1, Alignment::Left),
+                TableCell::new_with_alignment("(Not found)", 1, Alignment::Left)
+            ]));
+            table.add_row(Row::new(vec![
+                TableCell::new_with_alignment("", 1, Alignment::Left),
+                TableCell::new_with_alignment("Gateway IP", 1, Alignment::Left),
+                TableCell::new_with_alignment("(Not found)", 1, Alignment::Left)
+            ]));
+        }
+        
         table.add_row(Row::new(vec![
             TableCell::new_with_alignment("", 3, Alignment::Left)
         ]));
