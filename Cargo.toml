@@ -3,6 +3,7 @@ name = "sysdump"
 version = "0.1.0"
 edition = "2021"
 authors = ["shellrow <81893184+shellrow@users.noreply.github.com>"]
+license = "MIT"
 
 [lib]
 name="sysdump"
