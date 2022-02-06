@@ -3,9 +3,6 @@ use sysinfo::{System, SystemExt, ProcessorExt, DiskExt, UserExt, PidExt, Process
 use default_net::Interface as NetworkInterface;
 use std::collections::HashMap;
 
-#[cfg(target_os = "windows")]
-use crate::os::windows;
-
 #[derive(Clone, Debug)]
 pub struct CpuInfo {
     pub vendor_id: String,
