@@ -14,7 +14,7 @@ name="sysdump"
 path = "src/bin/main.rs"
 
 [dependencies]
-default-net = "0.8.0"
+default-net = "0.8.1"
 sysinfo = "0.23.0"
 netstat2 = "0.9.1"
 reqwest = "0.11.9"

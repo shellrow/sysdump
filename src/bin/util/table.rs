@@ -226,6 +226,21 @@ pub fn show_system_overview() {
         TableCell::new_with_alignment(sys_overview.os.boot_time, 1, Alignment::Left)
     ]));
     table.add_row(Row::new(vec![
+        TableCell::new_with_alignment("", 1, Alignment::Left),
+        TableCell::new_with_alignment("Avg One", 1, Alignment::Left),
+        TableCell::new_with_alignment(sys_overview.os.load_average.one, 1, Alignment::Left)
+    ]));
+    table.add_row(Row::new(vec![
+        TableCell::new_with_alignment("", 1, Alignment::Left),
+        TableCell::new_with_alignment("Avg Five", 1, Alignment::Left),
+        TableCell::new_with_alignment(sys_overview.os.load_average.five, 1, Alignment::Left)
+    ]));
+    table.add_row(Row::new(vec![
+        TableCell::new_with_alignment("", 1, Alignment::Left),
+        TableCell::new_with_alignment("Avg Fifteen", 1, Alignment::Left),
+        TableCell::new_with_alignment(sys_overview.os.load_average.fifteen, 1, Alignment::Left)
+    ]));
+    table.add_row(Row::new(vec![
         TableCell::new_with_alignment("", 3, Alignment::Left)
     ]));
     // User
@@ -255,6 +270,54 @@ pub fn show_system_overview() {
         ]));
         table.add_row(Row::new(vec![
             TableCell::new_with_alignment("", 3, Alignment::Left)
+        ]));
+    }
+    // render table
+    println!("{}", table.render());
+}
+
+pub fn show_process_simple() {
+    let process_map = shared::get_process_map();
+    let mut table = Table::new();
+    table.max_column_width = 60;
+    table.separate_rows = false;
+    table.style = TableStyle::blank();
+    // Process
+    table.add_row(Row::new(vec![
+        TableCell::new_with_alignment("Process", 3, Alignment::Left)
+    ]));
+    table.add_row(Row::new(vec![
+        TableCell::new_with_alignment("PID", 1, Alignment::Left),
+        TableCell::new_with_alignment("Name", 1, Alignment::Left),
+        // TableCell::new_with_alignment("Command", 1, Alignment::Left),
+        // TableCell::new_with_alignment("Full Path", 1, Alignment::Left),
+        // TableCell::new_with_alignment("Env", 1, Alignment::Left),
+        // TableCell::new_with_alignment("Working Dir", 1, Alignment::Left),
+        // TableCell::new_with_alignment("Root Dir", 1, Alignment::Left),
+        // TableCell::new_with_alignment("Memory", 1, Alignment::Left),
+        // TableCell::new_with_alignment("Virtual Memory", 1, Alignment::Left),
+        // TableCell::new_with_alignment("Parent", 1, Alignment::Left),
+        // TableCell::new_with_alignment("Status", 1, Alignment::Left),
+        // TableCell::new_with_alignment("Start Time", 1, Alignment::Left),
+        // TableCell::new_with_alignment("CPU Usage", 1, Alignment::Left),
+        // TableCell::new_with_alignment("Disk Usage", 1, Alignment::Left),
+    ]));
+    for (pid, proc) in process_map {
+        table.add_row(Row::new(vec![
+            TableCell::new_with_alignment(pid, 1, Alignment::Left),
+            TableCell::new_with_alignment(proc.name, 1, Alignment::Left),
+            // TableCell::new_with_alignment(proc.cmd, 1, Alignment::Left),
+            // TableCell::new_with_alignment(proc.full_path, 1, Alignment::Left),
+            // TableCell::new_with_alignment(proc.environ, 1, Alignment::Left),
+            // TableCell::new_with_alignment(proc.cw_dir, 1, Alignment::Left),
+            // TableCell::new_with_alignment(proc.root_dir, 1, Alignment::Left),
+            // TableCell::new_with_alignment(proc.memory, 1, Alignment::Left),
+            // TableCell::new_with_alignment(proc.virtual_memory, 1, Alignment::Left),
+            // TableCell::new_with_alignment(proc.parent, 1, Alignment::Left),
+            // TableCell::new_with_alignment(proc.status, 1, Alignment::Left),
+            // TableCell::new_with_alignment(proc.start_time, 1, Alignment::Left),
+            // TableCell::new_with_alignment(proc.cpu_usage, 1, Alignment::Left),
+            // TableCell::new_with_alignment(format!("{:?},", proc.disk_usage), 1, Alignment::Left),
         ]));
     }
     // render table
