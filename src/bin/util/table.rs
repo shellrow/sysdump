@@ -1,9 +1,8 @@
 use term_table::{Table, TableStyle};
 use term_table::table_cell::{TableCell,Alignment};
 use term_table::row::Row;
-
 use sysdump::os::shared::{self, SystemOverview};
-use sysdump::network::netstat;
+use sysdump::network::{netstat, ip};
 
 pub fn show_system_overview() {
     let sys_overview: SystemOverview = shared::get_system_overview();
@@ -359,6 +358,60 @@ pub fn show_connection_simple() {
             ]));
         }
     }
+    // render table
+    println!("{}", table.render());
+}
+
+pub fn show_ip_info() {
+    let ip_info = ip::get_external_ip_info().unwrap();
+    let mut table = Table::new();
+    table.max_column_width = 60;
+    table.separate_rows = false;
+    table.style = TableStyle::blank();
+
+    table.add_row(Row::new(vec![
+        TableCell::new_with_alignment("External IP Info", 3, Alignment::Left)
+    ]));
+    table.add_row(Row::new(vec![
+        TableCell::new_with_alignment("", 1, Alignment::Left),
+        TableCell::new_with_alignment("IP Version", 1, Alignment::Left),
+        TableCell::new_with_alignment(ip_info.ip_version, 1, Alignment::Left)
+    ]));
+    table.add_row(Row::new(vec![
+        TableCell::new_with_alignment("", 1, Alignment::Left),
+        TableCell::new_with_alignment("IP Address", 1, Alignment::Left),
+        TableCell::new_with_alignment(ip_info.ip_addr, 1, Alignment::Left)
+    ]));
+    table.add_row(Row::new(vec![
+        TableCell::new_with_alignment("", 1, Alignment::Left),
+        TableCell::new_with_alignment("Host Name", 1, Alignment::Left),
+        TableCell::new_with_alignment(ip_info.host_name, 1, Alignment::Left)
+    ]));
+    table.add_row(Row::new(vec![
+        TableCell::new_with_alignment("", 1, Alignment::Left),
+        TableCell::new_with_alignment("CIDR", 1, Alignment::Left),
+        TableCell::new_with_alignment(ip_info.cidr, 1, Alignment::Left)
+    ]));
+    table.add_row(Row::new(vec![
+        TableCell::new_with_alignment("", 1, Alignment::Left),
+        TableCell::new_with_alignment("ASN", 1, Alignment::Left),
+        TableCell::new_with_alignment(ip_info.asn, 1, Alignment::Left)
+    ]));
+    table.add_row(Row::new(vec![
+        TableCell::new_with_alignment("", 1, Alignment::Left),
+        TableCell::new_with_alignment("AS Name", 1, Alignment::Left),
+        TableCell::new_with_alignment(ip_info.as_name, 1, Alignment::Left)
+    ]));
+    table.add_row(Row::new(vec![
+        TableCell::new_with_alignment("", 1, Alignment::Left),
+        TableCell::new_with_alignment("Country Code", 1, Alignment::Left),
+        TableCell::new_with_alignment(ip_info.country_code, 1, Alignment::Left)
+    ]));
+    table.add_row(Row::new(vec![
+        TableCell::new_with_alignment("", 1, Alignment::Left),
+        TableCell::new_with_alignment("Country Name", 1, Alignment::Left),
+        TableCell::new_with_alignment(ip_info.country_name, 1, Alignment::Left)
+    ]));
     // render table
     println!("{}", table.render());
 }
