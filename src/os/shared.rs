@@ -1,4 +1,4 @@
-use sysinfo::{System, SystemExt, ProcessorExt, DiskExt, UserExt, PidExt, ProcessExt, DiskUsage, RefreshKind};
+use sysinfo::{System, SystemExt, DiskExt, UserExt, PidExt, ProcessExt, DiskUsage, RefreshKind, CpuExt};
 //use sysinfo::{NetworkExt, NetworksExt};
 use default_net::Interface as NetworkInterface;
 use std::collections::HashMap;
@@ -127,10 +127,10 @@ pub struct ProcessInfo {
 }
 
 pub fn get_system_overview() -> SystemOverview {
-    let sys_cpu = System::new_with_specifics(RefreshKind::new().with_cpu());
+    let sys_cpu = System::new_with_specifics(RefreshKind::everything());
     // CPU
-    let global_cpu = sys_cpu.global_processor_info();
-    let processors = sys_cpu.processors();
+    let global_cpu = sys_cpu.global_cpu_info();
+    let processors = sys_cpu.cpus();
     let cpu_info = CpuInfo {
         vendor_id: global_cpu.vendor_id().to_string(),
         brand: global_cpu.brand().to_string(),
@@ -204,9 +204,9 @@ pub fn get_system_overview() -> SystemOverview {
     let mut user_list: Vec<UserInfo> = vec![];
     for user in sys.users() {
         let user_info = UserInfo {
-            user_id: user.uid().to_string(),
+            user_id: user.id().to_string(),
             user_name: user.name().to_string(),
-            group_id: user.gid().to_string(),
+            group_id: user.group_id().to_string(),
             groups: user.groups().to_vec(),
         };
         user_list.push(user_info);
