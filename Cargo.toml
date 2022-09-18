@@ -2,8 +2,11 @@
 name = "sysdump"
 version = "0.1.0"
 edition = "2021"
-authors = ["shellrow <81893184+shellrow@users.noreply.github.com>"]
+authors = ["shellrow <shellrow@protonmail.com>"]
 license = "MIT"
+readme = "README.md"
+description = "Cross-platform system information viewer"
+repository = "https://github.com/shellrow/sysdump"
 
 [lib]
 name="sysdump"
